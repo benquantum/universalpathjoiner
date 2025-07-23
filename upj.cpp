@@ -1,5 +1,5 @@
 #pragma region Universal Path Joiner
-//DO NOT call "pathJoinStr"
+//DO NOT call "pathJoinStr" (not recommended)
 #include <string>
 inline std::string pathJoinStr(const std::string& p) {
     return p;
@@ -21,7 +21,7 @@ std::string pathJoinStr(const std::string& p1, const std::string& p2, Args... ar
     tmp += p2mod;
     return pathJoinStr(tmp, args...);
 }
-//"pathJoin" function
+//"pathJoin" wrapper function
 template<typename... Args>
 const char* pathJoin(const std::string& p1, const std::string& p2, Args... args) {
     static std::string tmp;
