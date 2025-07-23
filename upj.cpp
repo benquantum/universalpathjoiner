@@ -1,5 +1,5 @@
 #pragma region Universal Path Joiner
-//DO NOT call "pathJoinStr" (not recommended) 
+//DO NOT call "pathJoinStr" (not recommended)
 #include <string>
 inline std::string pathJoinStr(const std::string& p) {
     return p;
