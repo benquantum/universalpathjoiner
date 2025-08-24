@@ -1,42 +1,36 @@
 #pragma region Universal Path Joiner
-//Example usage: pathJoin("assets","chewbacca","chewie.png")
 #include <cstring>
-#include <cstdlib>
+#include <cstddef>
 #ifdef _WIN32
 constexpr char SEP = '\\';
 #else
 constexpr char SEP = '/';
 #endif
-inline void appendPart(char* buffer, size_t& len, const char* part) {
+struct Path {
+    static constexpr size_t MAX_LEN = 256;
+    char buffer[MAX_LEN] = {0};
+};
+inline void appendPart(char* buffer, size_t maxLen, const char* part) {
     if (!part || !*part) return;
-    if (len > 0 && buffer[len - 1] != SEP)
-        buffer[len++] = SEP, buffer[len] = '\0';
-    if (part[0] == SEP)
-        part++;
-    while (*part)
+    size_t len = std::strlen(buffer);
+    if (len > 0 && buffer[len - 1] != SEP) buffer[len++] = SEP;
+    while (*part == SEP) part++;
+    while (*part && len < maxLen - 1) {
+        if (*part == SEP && len > 0 && buffer[len - 1] == SEP) { ++part; continue; }
         buffer[len++] = *part++;
+    }
     buffer[len] = '\0';
 }
-struct Path {
-    char* cstr;
-    Path(char* ptr) : cstr(ptr) {}
-    ~Path() { std::free(cstr); }
-
-    const char* get() const { return cstr; }
-    operator const char*() const { return cstr; }
-};
 template<typename... Args>
-Path pathJoin(const char* first, Args... args) {
-    size_t totalLen = std::strlen(first);
-    const char* parts[] = {args...};
-    for (const char* p : parts)
-        totalLen += std::strlen(p) + 1;
-    char* buffer = (char*)std::malloc(totalLen + 1);
-    if (!buffer) return Path(nullptr);
-    size_t len = 0;
-    appendPart(buffer, len, first);
-    for (const char* p : parts)
-        appendPart(buffer, len, p);
-    return Path(buffer);
+const char* pathJoin(const char* first, Args... args) {
+    static Path pool[1024];
+    static size_t index = 0;
+    Path* p = &pool[index];
+    index = (index + 1) % 1024;
+    p->buffer[0] = '\0';
+    appendPart(p->buffer, Path::MAX_LEN, first);
+    const char* parts[] = { args... };
+    for (const char* part : parts) appendPart(p->buffer, Path::MAX_LEN, part);
+    return p->buffer;
 }
 #pragma endregion
