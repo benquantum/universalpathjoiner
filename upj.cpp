@@ -1,4 +1,8 @@
-#pragma region Universal Path Joiner
+#pragma region UNIVERSAL PATH JOINER
+//Correct file or directory path generator based on current OS
+//Usage: pathJoin("assets", "chewie", "chewie.png")
+//Result (on Windows): "assets\\chewie\\chewie.png"
+//Result on other OSs: "assets/chewie/chewie.png"
 #include <cstring>
 #include <cstddef>
 #ifdef _WIN32
@@ -23,7 +27,7 @@ inline void appendPart(char* buffer, size_t maxLen, const char* part) {
 }
 template<typename... Args>
 const char* pathJoin(const char* first, Args... args) {
-    static Path pool[1024];
+    static Path pool[1024]; //Max number of simultaneous active paths (increaseable)
     static size_t index = 0;
     Path* p = &pool[index];
     index = (index + 1) % 1024;
