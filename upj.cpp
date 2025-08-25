@@ -1,7 +1,7 @@
 #pragma region UNIVERSAL PATH JOINER
 //Correct file or directory path generator based on current OS
 //Usage: pathJoin("assets", "chewie", "chewie.png")
-//Result (on Windows): "assets\\chewie\\chewie.png"
+//Result on Windows: "assets\\chewie\\chewie.png"
 //Result on other OSs: "assets/chewie/chewie.png"
 #include <cstring>
 #include <cstddef>
